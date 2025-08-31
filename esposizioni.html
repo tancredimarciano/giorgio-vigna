@@ -76,19 +76,277 @@
     <section class="exhibitions page-section">
         <div class="container">
             <h1 class="page-title">Esposizioni</h1>
-            <div class="exhibitions-list">
-                <article class="exhibition-item" data-exhibition-id="1">
-                    <div class="exhibition-image">
-                        <img src="https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=800&h=500&fit=crop" alt="Exhibition 1">
-                    </div>
-                    <div class="exhibition-content">
-                        <span class="exhibition-date">15 Marzo - 30 Aprile 2024</span>
-                        <h3 class="exhibition-title">Metamorfosi Contemporanee</h3>
-                        <p class="exhibition-location">Galleria d'Arte Moderna, Milano</p>
-                        <p class="exhibition-description">Una retrospettiva che esplora le trasformazioni della materia attraverso diverse tecniche espressive.</p>
-                        <a href="#" class="exhibition-link">Scopri di più →</a>
-                    </div>
-                </article>
+            
+            <!-- Exhibition Tabs -->
+            <div class="exhibition-tabs">
+                <button class="tab-btn active" data-tab="personali">Mostre Personali</button>
+                <button class="tab-btn" data-tab="collettive">Mostre Collettive</button>
+            </div>
+            
+            <!-- Personal Exhibitions -->
+            <div class="tab-content active" id="personali">
+                <div class="exhibitions-list">
+                    <div class="year-header" data-year="2024">2024</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Costellazioni</h3>
+                            <p class="exhibition-location">Elisabetta Cipriani – Jewellery by Contemporary Artists, Londra</p>
+                            <a href="#" class="exhibition-link">Scopri di più →</a>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2023">2023</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Metamorfosi</h3>
+                            <p class="exhibition-location">Palazzo Loredan, Venezia</p>
+                            <a href="#" class="exhibition-link">Scopri di più →</a>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Analogie</h3>
+                            <p class="exhibition-location">Museo Eremitani, Padova</p>
+                            <a href="#" class="exhibition-link">Scopri di più →</a>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Autodisporsi. Caso e volontà</h3>
+                            <p class="exhibition-location">Emil Lukas – Giorgio Vigna, Studio la Città, Verona</p>
+                            <a href="#" class="exhibition-link">Scopri di più →</a>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2022">2022</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Sassi</h3>
+                            <p class="exhibition-location">Oratorio di San Rocco, Padova</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2021">2021</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Lapilli</h3>
+                            <p class="exhibition-location">Museo di Castelvecchio, Verona</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2020">2020</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Dalla sabbia, opere in vetro</h3>
+                            <p class="exhibition-location">BUILDINGBOX Gallery, Milano</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2019">2019</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Bijoux</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Flora Maris</h3>
+                            <p class="exhibition-location">Elisabetta Cipriani – Jewellery by Contemporary Artists, Londra</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Fuochi Boreali</h3>
+                            <p class="exhibition-location">Palazzo Loredan, The Venice Glass Week, Venezia</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Acque Solide</h3>
+                            <p class="exhibition-location">GAD Giudecca, Studio la Città, Venezia</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2018">2018</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Acque Astrali</h3>
+                            <p class="exhibition-location">Studio la Città, Verona</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Cosmologies</h3>
+                            <p class="exhibition-location">Rossi & Rossi in partnership with Giovanni Martino, Hong Kong</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Acque</h3>
+                            <p class="exhibition-location">Museo Fortuny, The Venice Glass Week, Venezia</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2017">2017</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Fuochi di Rugiada</h3>
+                            <p class="exhibition-location">Gallerie dell'Accademia, The Venice Glass Week, Venezia</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2016">2016</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Segments of Light</h3>
+                            <p class="exhibition-location">Design Miami/, Elisabetta Cipriani – Jewellery by Contemporary Artists, Miami</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2015">2015</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Cosmographies</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Design Miami/Basel</h3>
+                            <p class="exhibition-location">Elisabetta Cipriani – Jewellery by Contemporary Artists, Basilea</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2014">2014</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Oltremare YA! 2014</h3>
+                            <p class="exhibition-location">Yacht Club Monaco, Principato di Monaco</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Sospeso</h3>
+                            <p class="exhibition-location">Elisabetta Cipriani – Jewellery by Contemporary Artists, Londra</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            
+            <!-- Group Exhibitions -->
+            <div class="tab-content" id="collettive">
+                <div class="exhibitions-list">
+                    <div class="year-header" data-year="2024">2024</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Vice Versa</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Moleskine Detour</h3>
+                            <p class="exhibition-location">Pinacoteca Ambrosiana, Milano</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Torn Curtain</h3>
+                            <p class="exhibition-location">Studio la Città, Verona</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2023">2023</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Un bijou un objet</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Autour de l'arbre</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2022">2022</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Dio nasce</h3>
+                            <p class="exhibition-location">Galleria San Fedele, Milano</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Geometries</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Vetro. Gioielli italiani tra '800 e '900</h3>
+                            <p class="exhibition-location">Museo del Bijou di Casalmaggiore, Cremona</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">I gioielli della Fondazione Cominelli</h3>
+                            <p class="exhibition-location">LeoGalleries, Monza</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Couleurs</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Rings!</h3>
+                            <p class="exhibition-location">Houston Center For Contemporary Craft, Houston</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2021">2021</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Traditions et modernismes</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Rings!</h3>
+                            <p class="exhibition-location">Moore College of Art Galleries, Filadelfia</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Bijoux d'artistes de Picasso à Koons</h3>
+                            <p class="exhibition-location">La collection de Diane Venet, Grimaldi Forum, Monaco</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Light Works</h3>
+                            <p class="exhibition-location">Elisabetta Cipriani – Wearable Art, Londra</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Vitrea. Vetro italiano contemporaneo d'autore</h3>
+                            <p class="exhibition-location">Triennale Milano, Milano</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">L'Arca di vetro. La collezione di animali di Pierre Rosenberg</h3>
+                            <p class="exhibition-location">Le Stanze del Vetro, Venezia</p>
+                        </div>
+                    </article>
+                    <div class="year-header" data-year="2020">2020</div>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Miroirs</h3>
+                            <p class="exhibition-location">Galerie Naila de Monbrison, Parigi</p>
+                        </div>
+                    </article>
+                    <article class="exhibition-item">
+                        <div class="exhibition-content">
+                            <h3 class="exhibition-title">Vetro</h3>
+                            <p class="exhibition-location">Studio la Città, Verona</p>
+                        </div>
+                    </article>
+                </div>
             </div>
         </div>
     </section>
@@ -109,5 +367,51 @@
     </footer>
     
     <script src="script.js"></script>
+    <script>
+    // Exhibition tabs functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                btn.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+        
+        // Add discover more links to all exhibitions that don't have them
+        const exhibitionContents = document.querySelectorAll('.exhibition-content');
+        exhibitionContents.forEach(content => {
+            if (!content.querySelector('.exhibition-link')) {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = 'exhibition-link';
+                link.textContent = 'Scopri di più →';
+                content.appendChild(link);
+            }
+        });
+        
+        // Convert locations to clickable map links
+        const locations = document.querySelectorAll('.exhibition-location');
+        locations.forEach(location => {
+            if (!location.querySelector('.location-link')) {
+                const text = location.textContent.trim();
+                const query = encodeURIComponent(text);
+                location.innerHTML = `
+                    <span class="location-pin"></span>
+                    <a href="https://maps.google.com/maps?q=${query}" target="_blank" class="location-link">${text}</a>
+                `;
+            }
+        });
+    });
+    </script>
 </body>
 </html>

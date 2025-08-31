@@ -54,6 +54,10 @@
                 pubblicazioni: 'Pubblicazioni',
                 cataloghi: 'Cataloghi'
             }),
+            exhibitions: Object.freeze({
+                personal: 'Mostre Personali',
+                group: 'Mostre Collettive'
+            }),
             footer: Object.freeze({
                 country: 'Italia'
             })
@@ -74,6 +78,10 @@
                 collaborazioni: 'Collaborations',
                 pubblicazioni: 'Publications',
                 cataloghi: 'Catalogues'
+            }),
+            exhibitions: Object.freeze({
+                personal: 'Personal Exhibitions',
+                group: 'Group Exhibitions'
             }),
             footer: Object.freeze({
                 country: 'Italy'
@@ -158,6 +166,19 @@
         const footerCountry = document.querySelector('.footer-country');
         if (footerCountry && translations[lang].footer) {
             footerCountry.textContent = sanitizeText(translations[lang].footer.country);
+        }
+        
+        // Update exhibition tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        if (tabBtns.length > 0 && translations[lang].exhibitions) {
+            tabBtns.forEach(btn => {
+                const tabType = btn.dataset.tab;
+                if (tabType === 'personali' && translations[lang].exhibitions.personal) {
+                    btn.textContent = sanitizeText(translations[lang].exhibitions.personal);
+                } else if (tabType === 'collettive' && translations[lang].exhibitions.group) {
+                    btn.textContent = sanitizeText(translations[lang].exhibitions.group);
+                }
+            });
         }
     }
     

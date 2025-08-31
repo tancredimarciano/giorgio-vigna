@@ -168,12 +168,24 @@
         // Update biography content
         updateBiographyContent();
         
-        // Update page title
+        // Update page title while preserving admin controls
         if (elements.pageTitle) {
             const currentPage = getCurrentPage();
             const title = translations[lang].titles?.[currentPage];
             if (title) {
-                elements.pageTitle.textContent = sanitizeText(title);
+                // Check if admin controls exist
+                const editControls = document.getElementById('editControls');
+                const hasEditControls = editControls && editControls.parentNode === elements.pageTitle;
+                
+                // Update only the text content, not the entire element
+                const textNode = Array.from(elements.pageTitle.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                if (textNode) {
+                    textNode.textContent = sanitizeText(title);
+                } else {
+                    // If no text node exists, create one but preserve existing children
+                    const newTextNode = document.createTextNode(sanitizeText(title));
+                    elements.pageTitle.insertBefore(newTextNode, elements.pageTitle.firstChild);
+                }
             }
         }
         
@@ -651,6 +663,7 @@ function adminLogin() {
         console.log('Login successful');
         isLoggedIn = true;
         localStorage.setItem('admin-logged-in', 'true');
+        document.body.classList.add('admin-mode');
         
         const adminLock = document.querySelector('.admin-lock');
         if (adminLock) adminLock.classList.add('unlocked');
@@ -670,7 +683,7 @@ function adminLogin() {
                 editControls.style.verticalAlign = 'middle';
                 editControls.innerHTML = `
                     <button class="edit-btn" id="editBtn" title="Modifica" style="background: none; border: none; cursor: pointer; padding: 12px; border-radius: 50%; opacity: 0.7; transition: opacity 0.3s ease;">
-                        <img class="edit-icon" src="images/icon/pencil.svg" alt="Modifica" style="width: 20px; height: 20px;">
+                        <img class="edit-icon" src="images/icon/gearshape.svg" alt="Modifica" style="width: 20px; height: 20px;">
                     </button>
                 `;
                 
@@ -717,17 +730,13 @@ function adminLogin() {
         // Add global toggleEditMode function if it doesn't exist
         if (typeof window.toggleEditMode !== 'function') {
             window.toggleEditMode = function() {
-                console.log('toggleEditMode called!');
                 const editControls = document.getElementById('editControls');
-                console.log('editControls found:', editControls);
-                if (!editControls) {
-                    console.log('No editControls found, returning');
-                    return;
-                }
+                if (!editControls) return;
                 
                 let editActions = document.getElementById('editActions');
                 if (!editActions) {
-                    // Create edit actions menu
+                    const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+                    
                     editActions = document.createElement('div');
                     editActions.id = 'editActions';
                     editActions.style.cssText = `
@@ -745,37 +754,32 @@ function adminLogin() {
                         margin-top: 10px;
                     `;
                     
-                    // Add arrow pointing up to the pencil
-                    editActions.innerHTML = `
-                        <div style="position: absolute; top: -12px; right: 25px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 12px solid #ddd; z-index: 999;"></div>
-                        <div style="position: absolute; top: -10px; right: 27px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid white; z-index: 1000;"></div>
-                        <button onclick="addMuseum()" title="Aggiungi" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
-                            <span style="font-size: 16px;">➕</span>
-                        </button>
-                        <button onclick="toggleDeleteMode()" title="Elimina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
-                            <span style="font-size: 16px;">🗑️</span>
-                        </button>
-                        <button onclick="toggleSortMode()" title="Riordina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
-                            <span style="font-size: 16px;">↕️</span>
-                        </button>
-                    `;
-                    
-                    editActions.innerHTML = `
-                        <button onclick="addMuseum()" title="Aggiungi" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                            <img src="images/icon/plus.svg" alt="Aggiungi" style="width: 16px; height: 16px;">
-                        </button>
-                        <button onclick="toggleDeleteMode()" title="Elimina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                            <img src="images/icon/trash.svg" alt="Elimina" style="width: 16px; height: 16px;">
-                        </button>
-                        <button onclick="toggleSortMode()" title="Riordina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                            <img src="images/icon/list.number.svg" alt="Riordina" style="width: 16px; height: 16px;">
-                        </button>
-                    `;
+                    if (currentPage === 'musei') {
+                        editActions.innerHTML = `
+                            <button onclick="addMuseum()" title="Aggiungi" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <img src="images/icon/plus.svg" alt="Aggiungi" style="width: 16px; height: 16px;">
+                            </button>
+                            <button onclick="toggleEditMuseumMode()" title="Modifica" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <img src="images/icon/pencil.svg" alt="Modifica" style="width: 16px; height: 16px;">
+                            </button>
+                            <button onclick="toggleSortMode()" title="Riordina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <img src="images/icon/list.number.svg" alt="Riordina" style="width: 16px; height: 16px;">
+                            </button>
+                            <button onclick="toggleDeleteMode()" title="Elimina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <img src="images/icon/trash.svg" alt="Elimina" style="width: 16px; height: 16px;">
+                            </button>
+                        `;
+                    } else {
+                        editActions.innerHTML = `
+                            <button onclick="alert('Strumenti admin per questa pagina non ancora implementati')" title="Modifica contenuto" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <img src="images/icon/pencil.svg" alt="Modifica" style="width: 16px; height: 16px;">
+                            </button>
+                        `;
+                    }
                     
                     editControls.style.position = 'relative';
                     editControls.appendChild(editActions);
                 } else {
-                    // Toggle visibility
                     editActions.style.display = editActions.style.display === 'none' ? 'flex' : 'none';
                 }
             };
@@ -832,6 +836,47 @@ function adminLogin() {
                         item.title = '';
                     });
                     alert('Modalità eliminazione disattivata.');
+                }
+            };
+        }
+        
+        if (typeof window.toggleEditMuseumMode !== 'function') {
+            window.toggleEditMuseumMode = function() {
+                const museumItems = document.querySelectorAll('.museum-item');
+                const isEditMode = document.body.classList.contains('edit-museum-mode');
+                
+                if (!isEditMode) {
+                    // Activate edit mode
+                    document.body.classList.add('edit-museum-mode');
+                    museumItems.forEach(item => {
+                        item.style.cursor = 'pointer';
+                        item.style.border = '2px solid green';
+                        item.title = 'Clicca per modificare';
+                        
+                        item.addEventListener('click', function editMuseum() {
+                            const name = item.querySelector('h3').textContent;
+                            const location = item.querySelector('p').textContent;
+                            
+                            const newName = prompt('Nome del museo:', name);
+                            const newLocation = prompt('Città e paese:', location);
+                            
+                            if (newName && newLocation) {
+                                item.querySelector('h3').textContent = newName;
+                                item.querySelector('p').textContent = newLocation;
+                            }
+                        });
+                    });
+                } else {
+                    // Deactivate edit mode
+                    document.body.classList.remove('edit-museum-mode');
+                    museumItems.forEach(item => {
+                        item.style.cursor = '';
+                        item.style.border = '';
+                        item.title = '';
+                        // Remove click listeners by cloning
+                        const newItem = item.cloneNode(true);
+                        item.parentNode.replaceChild(newItem, item);
+                    });
                 }
             };
         }
@@ -902,7 +947,37 @@ function adminLogin() {
 function adminLogout() {
     isLoggedIn = false;
     localStorage.removeItem('admin-logged-in');
+    document.body.classList.remove('admin-mode');
     document.querySelector('.admin-lock').classList.remove('unlocked');
+    
+    // Clean up all admin modes
+    document.body.classList.remove('delete-mode', 'edit-museum-mode', 'sort-mode');
+    
+    // Remove all checkboxes and reset museum items
+    const museumItems = document.querySelectorAll('.museum-item');
+    museumItems.forEach(item => {
+        item.classList.remove('delete-mode', 'selected', 'sortable');
+        item.style.cursor = '';
+        item.style.border = '';
+        item.style.paddingLeft = '';
+        item.title = '';
+        item.draggable = false;
+        
+        // Remove checkboxes
+        const checkbox = item.querySelector('.museum-checkbox');
+        if (checkbox) checkbox.remove();
+        
+        // Remove drag handles
+        const dragHandle = item.querySelector('.drag-handle');
+        if (dragHandle) dragHandle.remove();
+    });
+    
+    // Hide toolbars
+    const deleteToolbar = document.getElementById('deleteToolbar');
+    const sortToolbar = document.getElementById('sortToolbar');
+    if (deleteToolbar) deleteToolbar.classList.remove('show');
+    if (sortToolbar) sortToolbar.classList.remove('show');
+    
     const editControls = document.getElementById('editControls');
     if (editControls) {
         editControls.style.display = 'none';
@@ -918,6 +993,7 @@ function adminLogout() {
 function initAdminState() {
     if (localStorage.getItem('admin-logged-in') === 'true') {
         isLoggedIn = true;
+        document.body.classList.add('admin-mode');
         const adminLock = document.querySelector('.admin-lock');
         const editControls = document.getElementById('editControls');
         if (adminLock) adminLock.classList.add('unlocked');

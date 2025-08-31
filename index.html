@@ -84,7 +84,7 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Giorgio Vigna</h1>
+            <h1 class="hero-title page-title">Giorgio Vigna</h1>
         </div>
     </section>
 
@@ -179,6 +179,49 @@
 
     <!-- Collaborations Section -->
     <section id="collaborazioni" class="collaborations" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Collaborazioni</h2>
+            <div class="collaborations-content">
+                <p>Collaborazioni artistiche di Giorgio Vigna...</p>
+            </div>
+        </div>
+    </section>
+
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><strong>Giorgio Vigna</strong></p>
+                    <p>Via Tortona 4, Milano 20144</p>
+                    <p>Tel +39 02 58103947</p>
+                    <p>P.IVA 13451250156</p>
+                </div>
+                <div class="admin-lock" onclick="toggleAdminPanel()"></div>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="admin-panel" id="adminPanel">
+        <div id="loginForm">
+            <h3>Admin Login</h3>
+            <input type="text" id="adminUser" placeholder="Username">
+            <input type="password" id="adminPass" placeholder="Password">
+            <div id="loginError" class="login-error" style="display: none;"></div>
+            <button class="admin-login" onclick="adminLogin()">Login</button>
+            <button class="admin-cancel" onclick="toggleAdminPanel()">Cancel</button>
+        </div>
+        <div id="loggedInForm" style="display: none;">
+            <h3>Admin Panel</h3>
+            <button class="admin-login" onclick="adminLogout()">Logout</button>
+            <button class="admin-cancel" onclick="toggleAdminPanel()">Cancel</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>collaborations" style="display: none;">
         <div class="container">
             <h2 class="section-title">Collaborazioni</h2>
             <div class="collaborations-content">

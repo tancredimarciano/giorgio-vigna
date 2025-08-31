@@ -268,17 +268,20 @@
                     editControls.style.verticalAlign = 'middle';
                     editControls.innerHTML = `
                         <button class="edit-btn" id="editBtn" onclick="toggleEditMode()" title="Modifica">
-                            <img class="edit-icon" src="images/icon/pencil.svg" alt="Modifica">
+                            <img class="edit-icon" src="images/icon/gearshape.svg" alt="Modifica">
                         </button>
                         <div class="edit-actions" id="editActions" style="display: none;">
                             <button class="action-btn add-btn" onclick="addMuseum()" title="Aggiungi">
                                 <img class="action-icon" src="images/icon/plus.svg" alt="Aggiungi">
                             </button>
-                            <button class="action-btn delete-btn" onclick="toggleDeleteMode()" title="Elimina">
-                                <img class="action-icon" src="images/icon/trash.svg" alt="Elimina">
+                            <button class="action-btn edit-btn" onclick="toggleEditMuseumMode()" title="Modifica">
+                                <img class="action-icon" src="images/icon/pencil.svg" alt="Modifica">
                             </button>
                             <button class="action-btn sort-btn" onclick="toggleSortMode()" title="Riordina">
                                 <img class="action-icon" src="images/icon/list.number.svg" alt="Riordina">
+                            </button>
+                            <button class="action-btn delete-btn" onclick="toggleDeleteMode()" title="Elimina">
+                                <img class="action-icon" src="images/icon/trash.svg" alt="Elimina">
                             </button>
                         </div>
                     `;
@@ -298,14 +301,121 @@
     
     // Museum-specific functions - removed toggleEditMode as it's now global
     
+    function clearAllActiveStates() {
+        document.querySelectorAll('.edit-actions button').forEach(btn => {
+            btn.style.backgroundColor = '';
+        });
+    }
+    
+    function clearAllAdminModes() {
+        // Clear all admin mode classes
+        document.body.classList.remove('delete-mode', 'edit-museum-mode', 'sort-mode');
+        
+        // Reset all museum items
+        const museumItems = document.querySelectorAll('.museum-item');
+        museumItems.forEach(item => {
+            item.classList.remove('delete-mode', 'selected', 'sortable');
+            item.style.cursor = '';
+            item.style.border = '';
+            item.style.paddingLeft = '';
+            item.title = '';
+            item.draggable = false;
+            
+            // Remove checkboxes and drag handles
+            const checkbox = item.querySelector('.museum-checkbox');
+            const dragHandle = item.querySelector('.drag-handle');
+            if (checkbox) checkbox.remove();
+            if (dragHandle) dragHandle.remove();
+        });
+        
+        // Hide toolbars
+        const deleteToolbar = document.getElementById('deleteToolbar');
+        const sortToolbar = document.getElementById('sortToolbar');
+        if (deleteToolbar) deleteToolbar.classList.remove('show');
+        if (sortToolbar) sortToolbar.classList.remove('show');
+        
+        // Clear selected museums
+        if (typeof selectedMuseums !== 'undefined') {
+            selectedMuseums.clear();
+        }
+    }
+    
+    function setActiveState(button) {
+        clearAllActiveStates();
+        button.style.backgroundColor = '#e0e0e0';
+    }
+    
+    function toggleEditMuseumMode() {
+        const museumItems = document.querySelectorAll('.museum-item');
+        const isEditMode = document.body.classList.contains('edit-museum-mode');
+        const editButton = document.querySelector('button[onclick="toggleEditMuseumMode()"]');
+        
+        if (!isEditMode) {
+            // Clear all other modes first
+            clearAllAdminModes();
+            // Activate edit mode
+            document.body.classList.add('edit-museum-mode');
+            setActiveState(editButton);
+            
+            museumItems.forEach(item => {
+                item.style.cursor = 'pointer';
+                item.style.border = '2px solid green';
+                item.title = 'Clicca per modificare';
+                
+                item.addEventListener('click', function editMuseum() {
+                    const name = item.querySelector('h3').textContent;
+                    const location = item.querySelector('p').textContent;
+                    
+                    // Pre-fill modal with current values
+                    document.getElementById('museumName').value = name;
+                    document.getElementById('museumLocation').value = location;
+                    document.getElementById('museumLink').value = '';
+                    
+                    // Change modal title
+                    document.querySelector('#museumModal h3').textContent = 'Modifica Museo';
+                    document.querySelector('#museumModal button[type="submit"]').textContent = 'Salva';
+                    
+                    // Store reference to item being edited
+                    document.getElementById('museumModal').dataset.editingItem = Array.from(museumItems).indexOf(item);
+                    
+                    // Show modal
+                    document.getElementById('museumModal').classList.add('active');
+                    document.getElementById('museumName').focus();
+                });
+            });
+        } else {
+            // Deactivate edit mode
+            document.body.classList.remove('edit-museum-mode');
+            clearAllActiveStates();
+            
+            museumItems.forEach(item => {
+                item.style.cursor = '';
+                item.style.border = '';
+                item.title = '';
+                // Remove click listeners by cloning
+                const newItem = item.cloneNode(true);
+                item.parentNode.replaceChild(newItem, item);
+            });
+        }
+    }
+    
     function addMuseum() {
+        // Clear all modes when opening add modal
+        clearAllAdminModes();
+        clearAllActiveStates();
         document.getElementById('museumModal').classList.add('active');
         document.getElementById('museumName').focus();
     }
     
     function closeMuseumModal() {
-        document.getElementById('museumModal').classList.remove('active');
+        const modal = document.getElementById('museumModal');
+        modal.classList.remove('active');
+        modal.removeAttribute('data-editing-item');
         document.getElementById('museumForm').reset();
+        
+        // Reset modal title and button text
+        document.querySelector('#museumModal h3').textContent = 'Aggiungi Nuovo Museo';
+        document.querySelector('#museumModal button[type="submit"]').textContent = 'Aggiungi';
     }
     
     let selectedMuseums = new Set();
@@ -314,10 +424,14 @@
         const museumItems = document.querySelectorAll('.museum-item');
         const isDeleteMode = document.body.classList.contains('delete-mode');
         const deleteToolbar = document.getElementById('deleteToolbar');
+        const deleteButton = document.querySelector('button[onclick="toggleDeleteMode()"]');
         
         if (!isDeleteMode) {
+            // Clear all other modes first
+            clearAllAdminModes();
             // Activate delete mode
             document.body.classList.add('delete-mode');
+            setActiveState(deleteButton);
             selectedMuseums.clear();
             
             museumItems.forEach((item, index) => {
@@ -349,6 +463,7 @@
         } else {
             // Deactivate delete mode
             document.body.classList.remove('delete-mode');
+            clearAllActiveStates();
             deleteToolbar.classList.remove('show');
             selectedMuseums.clear();
             
@@ -422,14 +537,18 @@
     function toggleSortMode() {
         const museumItems = document.querySelectorAll('.museum-item');
         const sortToolbar = document.getElementById('sortToolbar');
+        const sortButton = document.querySelector('button[onclick="toggleSortMode()"]');
         
         if (!isSortMode) {
+            // Clear all other modes first
+            clearAllAdminModes();
             // Save original order
             originalOrder = Array.from(museumItems).map(item => item.cloneNode(true));
             
             // Activate sort mode
             isSortMode = true;
             document.body.classList.add('sort-mode');
+            setActiveState(sortButton);
             
             museumItems.forEach((item, index) => {
                 item.classList.add('sortable');
@@ -463,6 +582,7 @@
         
         isSortMode = false;
         document.body.classList.remove('sort-mode');
+        clearAllActiveStates();
         const sortToolbar = document.getElementById('sortToolbar');
         
         sortToolbar.classList.remove('show');
@@ -471,13 +591,42 @@
     }
     
     function saveSortOrder() {
-        // Here you would typically save the new order to a database
-        // For now, we'll just exit sort mode
-        exitSortMode();
+        // Clear original order so changes persist until refresh
+        originalOrder = [];
+        
+        // Exit sort mode
+        isSortMode = false;
+        document.body.classList.remove('sort-mode');
+        clearAllActiveStates();
+        const sortToolbar = document.getElementById('sortToolbar');
+        sortToolbar.classList.remove('show');
+        removeDragAndDropListeners();
+        
+        // Remove sort styling
+        const museumItems = document.querySelectorAll('.museum-item');
+        museumItems.forEach(item => {
+            item.classList.remove('sortable');
+            item.draggable = false;
+            item.style.cursor = '';
+            item.style.border = '';
+            item.title = '';
+            const dragHandle = item.querySelector('.drag-handle');
+            if (dragHandle) dragHandle.remove();
+        });
+        
+        // TODO: Here you would send the new order to your backend
+        // const currentOrder = Array.from(museumItems).map(item => ({
+        //     name: item.querySelector('h3').textContent,
+        //     location: item.querySelector('p').textContent
+        // }));
+        // await fetch('/api/museums/reorder', { method: 'POST', body: JSON.stringify(currentOrder) });
     }
     
     let draggedElement = null;
     let dragListeners = [];
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+    let isDragging = false;
     
     function initializeDragAndDrop() {
         const museumsList = document.querySelector('.museums-list');
@@ -486,6 +635,7 @@
         museumItems.forEach((item, index) => {
             item.dataset.originalIndex = index;
             
+            // Desktop drag handlers
             const dragStartHandler = (e) => {
                 draggedElement = item;
                 item.classList.add('dragging');
@@ -499,11 +649,65 @@
                 draggedElement = null;
             };
             
+            // Touch handlers for mobile
+            const touchStartHandler = (e) => {
+                e.preventDefault();
+                touchStartY = e.touches[0].clientY;
+                draggedElement = item;
+                item.classList.add('dragging');
+                isDragging = true;
+            };
+            
+            const touchMoveHandler = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                touchCurrentY = e.touches[0].clientY;
+                
+                // Visual feedback
+                item.style.transform = `translateY(${touchCurrentY - touchStartY}px)`;
+                item.style.zIndex = '1000';
+                
+                // Show drop indicator on mobile
+                showMobileDropIndicator(touchCurrentY);
+            };
+            
+            const touchEndHandler = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                isDragging = false;
+                
+                // Reset visual state
+                item.style.transform = '';
+                item.style.zIndex = '';
+                item.classList.remove('dragging');
+                
+                // Handle drop
+                const indicator = document.querySelector('.drop-indicator');
+                if (indicator && draggedElement) {
+                    const targetElement = indicator.targetElement;
+                    if (targetElement) {
+                        museumsList.insertBefore(draggedElement, targetElement);
+                    } else {
+                        museumsList.appendChild(draggedElement);
+                    }
+                }
+                
+                resetItemPositions();
+                draggedElement = null;
+            };
+            
+            // Add all event listeners
             item.addEventListener('dragstart', dragStartHandler);
             item.addEventListener('dragend', dragEndHandler);
+            item.addEventListener('touchstart', touchStartHandler, { passive: false });
+            item.addEventListener('touchmove', touchMoveHandler, { passive: false });
+            item.addEventListener('touchend', touchEndHandler, { passive: false });
             
             dragListeners.push({ element: item, type: 'dragstart', handler: dragStartHandler });
             dragListeners.push({ element: item, type: 'dragend', handler: dragEndHandler });
+            dragListeners.push({ element: item, type: 'touchstart', handler: touchStartHandler });
+            dragListeners.push({ element: item, type: 'touchmove', handler: touchMoveHandler });
+            dragListeners.push({ element: item, type: 'touchend', handler: touchEndHandler });
         });
         
         const dragOverHandler = (e) => {
@@ -536,28 +740,80 @@
         dragListeners.push({ element: museumsList, type: 'drop', handler: dropHandler });
     }
     
-    function animateItemsForInsertion(afterElement, mouseX, mouseY) {
-        // Remove existing drop indicator
+    function showMobileDropIndicator(touchY) {
+        // Remove existing indicator
         const existingIndicator = document.querySelector('.drop-indicator');
         if (existingIndicator) {
             existingIndicator.remove();
         }
         
-        // Check if mouse is over dragged element's original position
-        const draggedRect = draggedElement.getBoundingClientRect();
-        if (mouseX >= draggedRect.left && mouseX <= draggedRect.right && 
-            mouseY >= draggedRect.top && mouseY <= draggedRect.bottom) {
-            return; // Don't show indicator over original position
+        const allItems = Array.from(document.querySelectorAll('.museum-item:not(.dragging)'));
+        const museumsList = document.querySelector('.museums-list');
+        
+        let targetElement = null;
+        let insertPosition = 'end';
+        
+        // Find where to insert based on touch position
+        for (let i = 0; i < allItems.length; i++) {
+            const rect = allItems[i].getBoundingClientRect();
+            const itemCenter = rect.top + rect.height / 2;
+            
+            if (touchY < itemCenter) {
+                targetElement = allItems[i];
+                insertPosition = 'before';
+                break;
+            }
         }
         
-        // Find closest insertion point based on mouse position
+        // Create and show indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'drop-indicator';
+        indicator.style.cssText = `
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #007bff;
+            z-index: 9999;
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(0,123,255,0.8);
+            border-top: 2px solid #0056b3;
+            border-bottom: 2px solid #0056b3;
+        `;
+        
+        if (targetElement && insertPosition === 'before') {
+            const rect = targetElement.getBoundingClientRect();
+            const containerRect = museumsList.getBoundingClientRect();
+            indicator.style.top = (rect.top - containerRect.top - 8) + 'px';
+            indicator.targetElement = targetElement;
+        } else {
+            // Insert at end
+            const lastItem = allItems[allItems.length - 1];
+            if (lastItem) {
+                const rect = lastItem.getBoundingClientRect();
+                const containerRect = museumsList.getBoundingClientRect();
+                indicator.style.top = (rect.bottom - containerRect.top + 8) + 'px';
+            }
+            indicator.targetElement = null;
+        }
+        
+        museumsList.style.position = 'relative';
+        museumsList.appendChild(indicator);
+    }
+    
+    function animateItemsForInsertion(afterElement, mouseX, mouseY) {
+        // Desktop version - simplified
+        const existingIndicator = document.querySelector('.drop-indicator');
+        if (existingIndicator) {
+            existingIndicator.remove();
+        }
+        
         const allItems = Array.from(document.querySelectorAll('.museum-item:not(.dragging)'));
         const containerRect = document.querySelector('.museums-list').getBoundingClientRect();
         
         let closestPosition = null;
         let minDistance = Infinity;
         
-        // Check all possible insertion positions
         allItems.forEach((item, i) => {
             const rect = item.getBoundingClientRect();
             
@@ -568,7 +824,6 @@
                 closestPosition = {
                     x: rect.left - 8 - containerRect.left,
                     y: rect.top - containerRect.top,
-                    height: rect.height,
                     element: item
                 };
             }
@@ -580,21 +835,24 @@
                 closestPosition = {
                     x: rect.right + 8 - containerRect.left,
                     y: rect.top - containerRect.top,
-                    height: rect.height,
                     element: allItems[i + 1] || null
                 };
             }
         });
         
-
-        
         if (closestPosition) {
             const indicator = document.createElement('div');
             indicator.className = 'drop-indicator';
-            indicator.style.position = 'absolute';
-            indicator.style.left = closestPosition.x + 'px';
-            indicator.style.top = closestPosition.y + 'px';
-            indicator.style.height = closestPosition.height + 'px';
+            indicator.style.cssText = `
+                position: absolute;
+                left: ${closestPosition.x}px;
+                top: ${closestPosition.y}px;
+                width: 4px;
+                height: ${document.querySelector('.museum-item').getBoundingClientRect().height}px;
+                background-color: #007bff;
+                border-radius: 2px;
+                pointer-events: none;
+            `;
             indicator.targetElement = closestPosition.element;
             
             document.querySelector('.museums-list').style.position = 'relative';
@@ -633,19 +891,39 @@
     
     // Global toggleEditMode function
     window.toggleEditMode = function() {
+        // Clear any active admin modes first
+        clearAllAdminModes();
+        clearAllActiveStates();
+        
         const editActions = document.getElementById('editActions');
         if (editActions) {
             editActions.style.display = editActions.style.display === 'none' ? 'flex' : 'none';
         }
     }
     
-    // Close delete mode when clicking outside
+    // Close admin modes when clicking outside
     document.addEventListener('click', function(e) {
-        if (document.body.classList.contains('delete-mode') && 
+        const editControls = document.getElementById('editControls');
+        const editActions = document.getElementById('editActions');
+        
+        // Check if click is outside admin controls
+        if (!e.target.closest('#editControls') && 
             !e.target.closest('.museum-item') && 
-            !e.target.closest('.edit-actions') &&
-            !e.target.closest('.delete-toolbar')) {
-            toggleDeleteMode();
+            !e.target.closest('.delete-toolbar') &&
+            !e.target.closest('.sort-toolbar') &&
+            !e.target.closest('#museumModal')) {
+            
+            // If any admin mode is active, clear it first
+            if (document.body.classList.contains('delete-mode') ||
+                document.body.classList.contains('edit-museum-mode') ||
+                document.body.classList.contains('sort-mode')) {
+                clearAllAdminModes();
+                clearAllActiveStates();
+            }
+            // If no admin mode is active but menu is open, close menu
+            else if (editActions && editActions.style.display === 'flex') {
+                editActions.style.display = 'none';
+            }
         }
     });
     
@@ -656,25 +934,51 @@
         const name = document.getElementById('museumName').value.trim();
         const location = document.getElementById('museumLocation').value.trim();
         const link = document.getElementById('museumLink').value.trim();
+        const modal = document.getElementById('museumModal');
         
         if (name && location) {
-            const museumsList = document.querySelector('.museums-list');
-            const newMuseum = document.createElement('div');
-            newMuseum.className = 'museum-item';
+            const editingIndex = modal.dataset.editingItem;
             
-            if (link) {
-                newMuseum.innerHTML = `
-                    <h3><a href="${link}" target="_blank" rel="noopener">${name}</a></h3>
-                    <p>${location}</p>
-                `;
+            if (editingIndex !== undefined) {
+                // Edit existing museum
+                const museumItems = document.querySelectorAll('.museum-item');
+                const item = museumItems[parseInt(editingIndex)];
+                
+                if (link) {
+                    item.innerHTML = `
+                        <h3><a href="${link}" target="_blank" rel="noopener">${name}</a></h3>
+                        <p>${location}</p>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <h3>${name}</h3>
+                        <p>${location}</p>
+                    `;
+                }
+                
+                // Exit edit mode
+                toggleEditMuseumMode();
             } else {
-                newMuseum.innerHTML = `
-                    <h3>${name}</h3>
-                    <p>${location}</p>
-                `;
+                // Add new museum
+                const museumsList = document.querySelector('.museums-list');
+                const newMuseum = document.createElement('div');
+                newMuseum.className = 'museum-item';
+                
+                if (link) {
+                    newMuseum.innerHTML = `
+                        <h3><a href="${link}" target="_blank" rel="noopener">${name}</a></h3>
+                        <p>${location}</p>
+                    `;
+                } else {
+                    newMuseum.innerHTML = `
+                        <h3>${name}</h3>
+                        <p>${location}</p>
+                    `;
+                }
+                
+                museumsList.appendChild(newMuseum);
             }
             
-            museumsList.appendChild(newMuseum);
             closeMuseumModal();
         }
     });

@@ -22,7 +22,7 @@
     
     // Validate critical elements exist
     function validateElements() {
-        const criticalElements = ['navToggle', 'navMenu', 'lightbox'];
+        const criticalElements = ['navToggle', 'navMenu'];
         for (const key of criticalElements) {
             if (!elements[key]) {
                 console.warn(`Critical element missing: ${key}`);
@@ -85,6 +85,21 @@
             }),
             footer: Object.freeze({
                 country: 'Italy'
+            }),
+            museums: Object.freeze({
+                intro: 'Giorgio Vigna\'s works are present in the permanent collections of important international museum institutions:',
+                locations: Object.freeze({
+                    'Venezia (Italia)': 'Venice (Italy)',
+                    'Verona (Italia)': 'Verona (Italy)', 
+                    'Murano, Venezia (Italia)': 'Murano, Venice (Italy)',
+                    'Firenze (Italia)': 'Florence (Italy)',
+                    'Torino (Italia)': 'Turin (Italy)',
+                    'Parigi (Francia)': 'Paris (France)',
+                    'Helsinki (Finlandia)': 'Helsinki (Finland)',
+                    'Castello Sforzesco, Milano (Italia)': 'Castello Sforzesco, Milan (Italy)',
+                    'Ginevra (Svizzera)': 'Geneva (Switzerland)',
+                    'San Felice del Benaco (BS, Italia)': 'San Felice del Benaco (BS, Italy)'
+                })
             })
         })
     });
@@ -166,6 +181,26 @@
         const footerCountry = document.querySelector('.footer-country');
         if (footerCountry && translations[lang].footer) {
             footerCountry.textContent = sanitizeText(translations[lang].footer.country);
+        }
+        
+        // Update museums page
+        if (lang === 'en' && translations[lang].museums) {
+            const museumIntro = document.querySelector('[data-original="Le opere di Giorgio Vigna sono presenti nelle collezioni permanenti di importanti istituzioni museali internazionali:"]');
+            if (museumIntro) {
+                museumIntro.textContent = sanitizeText(translations[lang].museums.intro);
+            }
+            
+            document.querySelectorAll('[data-original]').forEach(element => {
+                const original = element.dataset.original;
+                if (translations[lang].museums.locations && translations[lang].museums.locations[original]) {
+                    element.textContent = sanitizeText(translations[lang].museums.locations[original]);
+                }
+            });
+        } else if (lang === 'it') {
+            // Restore Italian text
+            document.querySelectorAll('[data-original]').forEach(element => {
+                element.textContent = sanitizeText(element.dataset.original);
+            });
         }
         
         // Update exhibition tabs
@@ -309,7 +344,11 @@
     
     // Gallery Lightbox with security fixes
     function initGalleryLightbox() {
-        if (!elements.galleryItems || !elements.lightbox) return;
+        if (!elements.galleryItems) return;
+        if (!elements.lightbox) {
+            console.warn('Lightbox not found, skipping gallery initialization');
+            return;
+        }
         
         elements.galleryItems.forEach(item => {
             item.addEventListener('click', handleGalleryClick);
@@ -374,13 +413,13 @@
     
     // Lightbox controls
     function initLightboxControls() {
+        if (!elements.lightbox) return;
+        
         if (elements.lightboxClose) {
             elements.lightboxClose.addEventListener('click', closeLightbox);
         }
         
-        if (elements.lightbox) {
-            elements.lightbox.addEventListener('click', handleLightboxClick);
-        }
+        elements.lightbox.addEventListener('click', handleLightboxClick);
     }
     
     function closeLightbox() {
@@ -573,6 +612,328 @@
     // Add loaded class when everything is loaded
     window.addEventListener('load', () => {
         document.body.classList.add('loaded');
+        // Ensure admin state is properly initialized
+        initAdminState();
     }, { once: true });
     
 })();
+
+// Global admin functions
+let isLoggedIn = false;
+
+function toggleAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    const loginForm = document.getElementById('loginForm');
+    const loggedInForm = document.getElementById('loggedInForm');
+    
+    if (panel.classList.contains('active')) {
+        panel.classList.remove('active');
+    } else {
+        if (isLoggedIn) {
+            loginForm.style.display = 'none';
+            loggedInForm.style.display = 'block';
+        } else {
+            loginForm.style.display = 'block';
+            loggedInForm.style.display = 'none';
+        }
+        panel.classList.add('active');
+    }
+}
+
+function adminLogin() {
+    const user = document.getElementById('adminUser').value;
+    const pass = document.getElementById('adminPass').value;
+    const errorMsg = document.getElementById('loginError');
+    
+    console.log('Login attempt:', user, pass);
+    
+    if (user === 'admin' && pass === 'admin') {
+        console.log('Login successful');
+        isLoggedIn = true;
+        localStorage.setItem('admin-logged-in', 'true');
+        
+        const adminLock = document.querySelector('.admin-lock');
+        if (adminLock) adminLock.classList.add('unlocked');
+        
+        let editControls = document.getElementById('editControls');
+        console.log('Edit controls found:', editControls);
+        
+        if (!editControls) {
+            // Create edit controls if they don't exist
+            const pageTitle = document.querySelector('.page-title');
+            if (pageTitle) {
+                editControls = document.createElement('span');
+                editControls.id = 'editControls';
+                editControls.className = 'edit-controls';
+                editControls.style.display = 'inline-block';
+                editControls.style.marginLeft = '24px';
+                editControls.style.verticalAlign = 'middle';
+                editControls.innerHTML = `
+                    <button class="edit-btn" id="editBtn" title="Modifica" style="background: none; border: none; cursor: pointer; padding: 12px; border-radius: 50%; opacity: 0.7; transition: opacity 0.3s ease;">
+                        <img class="edit-icon" src="images/icon/pencil.svg" alt="Modifica" style="width: 20px; height: 20px;">
+                    </button>
+                `;
+                
+                // Add click event listener
+                const editBtn = editControls.querySelector('#editBtn');
+                console.log('Edit button found:', editBtn);
+                if (editBtn) {
+                    // Add hover effects
+                    editBtn.addEventListener('mouseenter', function() {
+                        this.style.opacity = '1';
+                        this.style.backgroundColor = 'rgba(0,0,0,0.05)';
+                    });
+                    editBtn.addEventListener('mouseleave', function() {
+                        this.style.opacity = '0.7';
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    
+                    editBtn.addEventListener('click', function(e) {
+                        console.log('Edit button clicked!');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleEditMode();
+                    });
+                    console.log('Click listener added to edit button');
+                }
+                pageTitle.appendChild(editControls);
+                console.log('Edit controls created and added');
+            }
+        } else {
+            editControls.style.display = 'inline-block';
+            console.log('Edit controls made visible after login');
+        }
+        
+        document.getElementById('adminPanel').classList.remove('active');
+        document.getElementById('adminUser').value = '';
+        document.getElementById('adminPass').value = '';
+        if (errorMsg) errorMsg.style.display = 'none';
+        
+        // Force check admin status on current page
+        if (typeof checkAdminStatus === 'function') {
+            checkAdminStatus();
+        }
+        
+        // Add global toggleEditMode function if it doesn't exist
+        if (typeof window.toggleEditMode !== 'function') {
+            window.toggleEditMode = function() {
+                console.log('toggleEditMode called!');
+                const editControls = document.getElementById('editControls');
+                console.log('editControls found:', editControls);
+                if (!editControls) {
+                    console.log('No editControls found, returning');
+                    return;
+                }
+                
+                let editActions = document.getElementById('editActions');
+                if (!editActions) {
+                    // Create edit actions menu
+                    editActions = document.createElement('div');
+                    editActions.id = 'editActions';
+                    editActions.style.cssText = `
+                        position: absolute;
+                        top: 100%;
+                        right: 0;
+                        background: white;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        padding: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        display: flex;
+                        gap: 8px;
+                        z-index: 1000;
+                        margin-top: 10px;
+                    `;
+                    
+                    // Add arrow pointing up to the pencil
+                    editActions.innerHTML = `
+                        <div style="position: absolute; top: -12px; right: 25px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 12px solid #ddd; z-index: 999;"></div>
+                        <div style="position: absolute; top: -10px; right: 27px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid white; z-index: 1000;"></div>
+                        <button onclick="addMuseum()" title="Aggiungi" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
+                            <span style="font-size: 16px;">➕</span>
+                        </button>
+                        <button onclick="toggleDeleteMode()" title="Elimina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
+                            <span style="font-size: 16px;">🗑️</span>
+                        </button>
+                        <button onclick="toggleSortMode()" title="Riordina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; margin-top: 4px;">
+                            <span style="font-size: 16px;">↕️</span>
+                        </button>
+                    `;
+                    
+                    editActions.innerHTML = `
+                        <button onclick="addMuseum()" title="Aggiungi" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <img src="images/icon/plus.svg" alt="Aggiungi" style="width: 16px; height: 16px;">
+                        </button>
+                        <button onclick="toggleDeleteMode()" title="Elimina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <img src="images/icon/trash.svg" alt="Elimina" style="width: 16px; height: 16px;">
+                        </button>
+                        <button onclick="toggleSortMode()" title="Riordina" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <img src="images/icon/list.number.svg" alt="Riordina" style="width: 16px; height: 16px;">
+                        </button>
+                    `;
+                    
+                    editControls.style.position = 'relative';
+                    editControls.appendChild(editActions);
+                } else {
+                    // Toggle visibility
+                    editActions.style.display = editActions.style.display === 'none' ? 'flex' : 'none';
+                }
+            };
+        }
+        
+        // Add museum management functions
+        if (typeof window.addMuseum !== 'function') {
+            window.addMuseum = function() {
+                const name = prompt('Nome del museo:');
+                const location = prompt('Città e paese:');
+                
+                if (name && location) {
+                    const museumsList = document.querySelector('.museums-list');
+                    if (museumsList) {
+                        const newMuseum = document.createElement('div');
+                        newMuseum.className = 'museum-item';
+                        newMuseum.innerHTML = `
+                            <h3>${name}</h3>
+                            <p>${location}</p>
+                        `;
+                        museumsList.appendChild(newMuseum);
+                        alert('Museo aggiunto con successo!');
+                    }
+                }
+            };
+        }
+        
+        if (typeof window.toggleDeleteMode !== 'function') {
+            window.toggleDeleteMode = function() {
+                const museumItems = document.querySelectorAll('.museum-item');
+                const isDeleteMode = document.body.classList.contains('delete-mode');
+                
+                if (!isDeleteMode) {
+                    // Activate delete mode
+                    document.body.classList.add('delete-mode');
+                    museumItems.forEach(item => {
+                        item.style.cursor = 'pointer';
+                        item.style.border = '2px solid red';
+                        item.title = 'Clicca per eliminare';
+                        
+                        item.addEventListener('click', function deleteMuseum() {
+                            if (confirm('Sei sicuro di voler eliminare questo museo?')) {
+                                item.remove();
+                            }
+                        });
+                    });
+                    alert('Modalità eliminazione attivata. Clicca sui musei per eliminarli.');
+                } else {
+                    // Deactivate delete mode
+                    document.body.classList.remove('delete-mode');
+                    museumItems.forEach(item => {
+                        item.style.cursor = '';
+                        item.style.border = '';
+                        item.title = '';
+                    });
+                    alert('Modalità eliminazione disattivata.');
+                }
+            };
+        }
+        
+        if (typeof window.toggleSortMode !== 'function') {
+            window.toggleSortMode = function() {
+                const museumsList = document.querySelector('.museums-list');
+                if (!museumsList) return;
+                
+                const museums = Array.from(museumsList.children);
+                const isSortMode = document.body.classList.contains('sort-mode');
+                
+                if (!isSortMode) {
+                    // Activate sort mode
+                    document.body.classList.add('sort-mode');
+                    museums.forEach((item, index) => {
+                        item.style.cursor = 'move';
+                        item.style.border = '2px solid blue';
+                        item.title = 'Trascina per riordinare';
+                        item.draggable = true;
+                        
+                        item.addEventListener('dragstart', function(e) {
+                            e.dataTransfer.setData('text/plain', index);
+                        });
+                        
+                        item.addEventListener('dragover', function(e) {
+                            e.preventDefault();
+                        });
+                        
+                        item.addEventListener('drop', function(e) {
+                            e.preventDefault();
+                            const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                            const targetIndex = Array.from(museumsList.children).indexOf(this);
+                            
+                            if (draggedIndex !== targetIndex) {
+                                const draggedItem = museums[draggedIndex];
+                                if (targetIndex > draggedIndex) {
+                                    museumsList.insertBefore(draggedItem, this.nextSibling);
+                                } else {
+                                    museumsList.insertBefore(draggedItem, this);
+                                }
+                            }
+                        });
+                    });
+                    alert('Modalità riordino attivata. Trascina i musei per riordinarli.');
+                } else {
+                    // Deactivate sort mode
+                    document.body.classList.remove('sort-mode');
+                    museums.forEach(item => {
+                        item.style.cursor = '';
+                        item.style.border = '';
+                        item.title = '';
+                        item.draggable = false;
+                    });
+                    alert('Modalità riordino disattivata.');
+                }
+            };
+        }
+    } else {
+        console.log('Login failed');
+        if (errorMsg) {
+            errorMsg.textContent = 'Password sbagliata';
+            errorMsg.style.display = 'block';
+        }
+    }
+}
+
+function adminLogout() {
+    isLoggedIn = false;
+    localStorage.removeItem('admin-logged-in');
+    document.querySelector('.admin-lock').classList.remove('unlocked');
+    const editControls = document.getElementById('editControls');
+    if (editControls) {
+        editControls.style.display = 'none';
+        const editActions = document.getElementById('editActions');
+        if (editActions) editActions.style.display = 'none';
+    }
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+    toggleAdminPanel();
+}
+
+// Check login state on page load
+function initAdminState() {
+    if (localStorage.getItem('admin-logged-in') === 'true') {
+        isLoggedIn = true;
+        const adminLock = document.querySelector('.admin-lock');
+        const editControls = document.getElementById('editControls');
+        if (adminLock) adminLock.classList.add('unlocked');
+        if (editControls) editControls.style.display = 'inline-block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initAdminState();
+    
+    const adminPass = document.getElementById('adminPass');
+    if (adminPass) {
+        adminPass.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                adminLogin();
+            }
+        });
+    }
+});

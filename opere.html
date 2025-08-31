@@ -122,9 +122,26 @@
                     <p>Tel +39 02 58103947</p>
                     <p>P.IVA 13451250156</p>
                 </div>
+                <div class="admin-lock" onclick="toggleAdminPanel()"></div>
             </div>
         </div>
     </footer>
+    
+    <div class="admin-panel" id="adminPanel">
+        <div id="loginForm">
+            <h3>Admin Login</h3>
+            <input type="text" id="adminUser" placeholder="Username">
+            <input type="password" id="adminPass" placeholder="Password">
+            <div id="loginError" class="login-error" style="display: none;"></div>
+            <button class="admin-login" onclick="adminLogin()">Login</button>
+            <button class="admin-cancel" onclick="toggleAdminPanel()">Cancel</button>
+        </div>
+        <div id="loggedInForm" style="display: none;">
+            <h3>Admin Panel</h3>
+            <button class="admin-login" onclick="adminLogout()">Logout</button>
+            <button class="admin-cancel" onclick="toggleAdminPanel()">Cancel</button>
+        </div>
+    </div>
     
     <script src="script.js"></script>
 </body>

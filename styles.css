@@ -23,7 +23,7 @@
 
 html {
     scroll-behavior: smooth;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body {
@@ -32,6 +32,8 @@ body {
     background-color: var(--secondary-color);
     line-height: 1.6;
     overflow-x: hidden;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -163,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     z-index: 1000;
@@ -373,8 +375,33 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Exhibitions Section */
 .exhibitions {
-    padding: var(--spacing-xl) 0;
-    background-color: #fafafa;
+    padding: var(--spacing-xl) 0 200px 0;
+    background-color: white;
+}
+
+.year-header {
+    position: sticky;
+    top: 55px;
+    background: white;
+    padding: 16px 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #888888;
+    border-bottom: 2px solid var(--border-color);
+    margin: 32px 0 16px 0;
+    z-index: 999;
+    transition: all 0.2s ease-out;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.exhibitions-list {
     overflow: visible;
 }
 
@@ -424,39 +451,39 @@ h1, h2, h3, h4, h5, h6 {
 
 .year-header {
     position: sticky;
-    top: 60px;
-    background: #fafafa;
-    padding: var(--spacing-sm) 0;
+    top: 55px;
+    background: white;
+    padding: 16px 0;
     font-size: 1.5rem;
     font-weight: 400;
     color: #888888;
     border-bottom: 2px solid var(--border-color);
-    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
-    z-index: 100;
+    margin: 32px 0 16px 0;
+    z-index: 999;
+    width: 100%;
 }
 
 .exhibition-item {
-    display: block;
+    display: flex;
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-lg);
     opacity: 0;
     animation: fadeIn 0.8s ease forwards;
+    align-items: flex-start;
+    flex-direction: row;
 }
 
-.exhibition-item:nth-child(even) {
-    grid-template-columns: 1fr 1fr;
-}
 
-.exhibition-item:nth-child(even) .exhibition-image {
-    order: 2;
-}
 
-.exhibition-item:nth-child(even) .exhibition-content {
-    order: 1;
-}
+
 
 .exhibition-image {
     overflow: hidden;
-    height: 400px;
+    width: 200px;
+    height: 150px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    order: 1;
 }
 
 .exhibition-image img {
@@ -471,7 +498,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .exhibition-content {
-    padding: var(--spacing-md);
+    flex: 1;
+    padding: 0;
+    order: 2;
 }
 
 .exhibition-date {
@@ -483,7 +512,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .exhibition-title {
     font-size: 2rem;
-    margin: var(--spacing-sm) 0;
+    margin: 0 0 var(--spacing-sm) 0;
 }
 
 .exhibition-location {
@@ -679,9 +708,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Footer */
 .footer {
     padding: var(--spacing-md) 0;
-    background-color: #fafafa;
+    background-color: white;
     border-top: 1px solid var(--border-color);
-    margin-top: var(--spacing-xl);
 }
 
 .footer-content {
@@ -797,18 +825,43 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .exhibition-item {
-        grid-template-columns: 1fr;
-    }
-    
-    .exhibition-item:nth-child(even) .exhibition-image,
-    .exhibition-item:nth-child(even) .exhibition-content {
-        order: unset;
+        flex-direction: column;
+        position: relative;
     }
     
     .exhibition-image {
-        height: 300px;
+        width: 100%;
+        height: 200px;
+        order: 1;
+    }
+    
+    .exhibition-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        color: white;
+        padding: 20px;
+        order: 2;
+    }
+    
+    .exhibition-title {
+        color: white;
+    }
+    
+    .exhibition-location {
+        color: rgba(255,255,255,0.8);
+    }
+    
+    .location-link {
+        color: rgba(255,255,255,0.8);
+    }
+    
+    .exhibition-link {
+        color: white;
     }
 }
 

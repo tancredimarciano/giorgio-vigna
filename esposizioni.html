@@ -497,9 +497,27 @@
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         
+        // Restore active tab from localStorage
+        const savedTab = localStorage.getItem('giorgio-vigna-active-tab') || 'personali';
+        
+        // Set initial active tab
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        const activeBtn = document.querySelector(`[data-tab="${savedTab}"]`);
+        const activeContent = document.getElementById(savedTab);
+        
+        if (activeBtn && activeContent) {
+            activeBtn.classList.add('active');
+            activeContent.classList.add('active');
+        }
+        
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetTab = btn.dataset.tab;
+                
+                // Save active tab to localStorage
+                localStorage.setItem('giorgio-vigna-active-tab', targetTab);
                 
                 // Remove active class from all tabs and contents
                 tabBtns.forEach(b => b.classList.remove('active'));
@@ -519,10 +537,6 @@
                 link.href = '#';
                 link.className = 'exhibition-link';
                 link.textContent = 'Scopri di più →';
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
                 content.appendChild(link);
             }
         });
@@ -531,14 +545,6 @@
         document.querySelectorAll('.exhibition-link').forEach(link => {
             if (!link.dataset.originalText) {
                 link.dataset.originalText = 'Scopri di più →';
-            }
-            // Ensure real links work properly
-            if (link.href && link.href !== '#' && !link.href.endsWith('#')) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.open(link.href, '_blank');
-                });
             }
         });
         
@@ -606,6 +612,22 @@
                     link.textContent = isEnglish ? 'Discover more →' : 'Scopri di più →';
                 });
             });
+        });
+        
+        // Adjust font size for long exhibition titles and locations
+        document.querySelectorAll('.exhibition-item').forEach(item => {
+            const title = item.querySelector('.exhibition-title');
+            const location = item.querySelector('.exhibition-location .location-link');
+            
+            if (title && location) {
+                const titleLength = title.textContent.length;
+                const locationLength = location.textContent.length;
+                
+                // Reduce font if title is long OR if both title and location are moderately long
+                if (titleLength > 30 || (titleLength > 20 && locationLength > 25)) {
+                    title.classList.add('long-title');
+                }
+            }
         });
 
 

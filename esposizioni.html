@@ -45,6 +45,13 @@
     </nav>
     
     <script>
+    // Force scroll to top on page load/refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
+    window.scrollTo(0, 0);
+    
     (function() {
         const urlParams = new URLSearchParams(window.location.search);
         const urlLang = urlParams.get('lang');
@@ -91,7 +98,7 @@
                         <div class="exhibition-content">
                             <h3 class="exhibition-title">Costellazioni</h3>
                             <p class="exhibition-location">Elisabetta Cipriani – Jewellery by Contemporary Artists, Londra</p>
-                            <a href="#" class="exhibition-link">Scopri di più →</a>
+                            <a href="https://www.elisabettacipriani.com/portfolio/costellazioni-4/" target="_blank" class="exhibition-link">Scopri di più →</a>
                         </div>
                     </article>
                     <div class="year-header" data-year="2023">2023</div>
@@ -399,6 +406,45 @@
             }
         });
         
+        // Add data-originalText to all exhibition links for translation
+        document.querySelectorAll('.exhibition-link').forEach(link => {
+            if (!link.dataset.originalText) {
+                link.dataset.originalText = 'Scopri di più →';
+            }
+        });
+        
+        // Location translations
+        const locationTranslations = {
+            'Londra': 'London',
+            'Venezia': 'Venice', 
+            'Padova': 'Padua',
+            'Verona': 'Verona',
+            'Milano': 'Milan',
+            'Parigi': 'Paris',
+            'Basilea': 'Basel',
+            'Principato di Monaco': 'Principality of Monaco',
+            'Monaco': 'Monaco',
+            'Hong Kong': 'Hong Kong',
+            'Miami': 'Miami',
+            'Houston': 'Houston',
+            'Filadelfia': 'Philadelphia',
+            'Cremona': 'Cremona',
+            'Monza': 'Monza'
+        };
+        
+        function translateLocation(text, toEnglish) {
+            if (toEnglish) {
+                for (const [italian, english] of Object.entries(locationTranslations)) {
+                    text = text.replace(new RegExp(italian, 'g'), english);
+                }
+            } else {
+                for (const [italian, english] of Object.entries(locationTranslations)) {
+                    text = text.replace(new RegExp(english, 'g'), italian);
+                }
+            }
+            return text;
+        }
+        
         // Convert locations to clickable map links
         const locations = document.querySelectorAll('.exhibition-location');
         locations.forEach(location => {
@@ -407,9 +453,30 @@
                 const query = encodeURIComponent(text);
                 location.innerHTML = `
                     <span class="location-pin"></span>
-                    <a href="https://maps.google.com/maps?q=${query}" target="_blank" class="location-link">${text}</a>
+                    <a href="https://maps.google.com/maps?q=${query}" target="_blank" class="location-link" data-original="${text}">${text}</a>
                 `;
             }
+        });
+        
+        // Language switching with location translation
+        const langButtons = document.querySelectorAll('.lang-btn');
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isEnglish = btn.dataset.lang === 'en';
+                
+                // Update all location links
+                document.querySelectorAll('.location-link').forEach(link => {
+                    const originalText = link.dataset.original || link.textContent;
+                    const translatedText = translateLocation(originalText, isEnglish);
+                    link.textContent = translatedText;
+                    link.href = `https://maps.google.com/maps?q=${encodeURIComponent(translatedText)}`;
+                });
+                
+                // Update "Scopri di più" links
+                document.querySelectorAll('.exhibition-link').forEach(link => {
+                    link.textContent = isEnglish ? 'Discover more →' : 'Scopri di più →';
+                });
+            });
         });
     });
     </script>

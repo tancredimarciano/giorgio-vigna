@@ -53,11 +53,21 @@
                     (savedLang === 'en' || savedLang === 'it') ? savedLang : 'it';
         
         const langButtons = document.querySelectorAll('.lang-btn');
+        const langSwitches = document.querySelectorAll('.language-switch, .language-switch-mobile');
+        
         langButtons.forEach(btn => {
             if (btn.dataset.lang === lang) {
                 btn.classList.add('active');
             } else {
                 btn.classList.remove('active');
+            }
+        });
+        
+        langSwitches.forEach(switchEl => {
+            if (lang === 'en') {
+                switchEl.classList.add('en');
+            } else {
+                switchEl.classList.remove('en');
             }
         });
     })();

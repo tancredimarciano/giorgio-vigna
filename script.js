@@ -207,6 +207,15 @@
             });
             
             updateContent(lang);
+            
+            // Update URL parameter
+            const url = new URL(window.location);
+            if (lang === 'en') {
+                url.searchParams.set('lang', 'en');
+            } else {
+                url.searchParams.delete('lang');
+            }
+            window.history.replaceState({}, '', url);
         } catch (error) {
             console.error('Error in switchLanguage:', error);
         }

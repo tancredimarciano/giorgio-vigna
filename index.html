@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giorgio Vigna - Artist</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .biography-home {
+                margin-top: -80px !important;
+            }
+            .biography-home .container > div {
+                flex-direction: column !important;
+                gap: 20px !important;
+                margin: 0 20px !important;
+            }
+            .artist-portrait {
+                align-self: center !important;
+            }
+            .artist-portrait img {
+                width: 250px !important;
+            }
+            .biography-content {
+                font-size: 1.1em !important;
+            }
+            /* Mobile Navigation */
+            .nav-container {
+                justify-content: space-between !important;
+            }
+            .language-switch {
+                display: none !important;
+            }
+            .language-switch-mobile {
+                display: flex !important;
+                justify-content: center;
+                gap: 10px;
+                padding: 20px 0;
+                border-top: 1px solid #eee;
+                margin-top: 20px;
+            }
+            .nav-toggle {
+                order: 2 !important;
+            }
+        }
+        @media (min-width: 769px) {
+            .language-switch-mobile {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-content">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">Giorgio Vigna</a>
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-menu">
+                <a href="opere.html" class="nav-link">Opere</a>
+                <a href="musei.html" class="nav-link">Musei</a>
+                <a href="esposizioni.html" class="nav-link">Esposizioni</a>
+                <a href="rassegna-stampa.html" class="nav-link">Rassegna Stampa</a>
+                <a href="collaborazioni.html" class="nav-link">Collaborazioni</a>
+                <a href="pubblicazioni.html" class="nav-link">Pubblicazioni</a>
+                <a href="cataloghi.html" class="nav-link">Cataloghi</a>
+                <!-- Language Switch Mobile -->
+                <div class="language-switch-mobile">
+                    <button class="lang-btn" data-lang="it">IT</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+            <!-- Language Switch Desktop -->
+            <div class="language-switch">
+                <button class="lang-btn" data-lang="it">IT</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+    
+    <script>
+    // Immediate language button setup to prevent flash
+    (function() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLang = urlParams.get('lang');
+            const savedLang = localStorage.getItem('giorgio-vigna-lang');
+            const lang = (urlLang === 'en' || urlLang === 'it') ? urlLang : 
+                        (savedLang === 'en' || savedLang === 'it') ? savedLang : 'it';
+            
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        } catch (e) {}
+    })();
+    </script>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Giorgio Vigna</h1>
+        </div>
+    </section>
+
+    <!-- Biography Section -->
+    <section id="biografia-home" class="biography-home" style="margin-top: -160px; margin-bottom: 100px; animation: fadeInUp 1s ease-out 0.5s both;">
+        <div class="container">
+            <div style="display: flex; align-items: flex-start; gap: 40px; margin: 0 60px;">
+                <div class="artist-portrait" style="flex-shrink: 0; animation: fadeInLeft 1s ease-out 0.3s both;">
+                    <img src="images/vigna-ritratto.jpg" alt="Giorgio Vigna" style="width: 300px; height: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                </div>
+                <div class="biography-content" style="font-size: 1.4em; line-height: 1.6; flex: 1;">
+                    <p>Giorgio Vigna è un artista che esplora i confini tra realtà e immaginazione attraverso sculture, gioielli, installazioni e lavori su carta. La sua ricerca è una costante indagine sulla trasformazione della materia, in cui gli elementi primari della natura – terra, acqua, fuoco, aria – vengono esplorati e trasfigurati fino a rivelarne possibilità nascoste.</p>
+                    
+                    <p>Utilizza materiali diversi – vetro, metallo, carta, inchiostro – sperimentandone i limiti e trasformandoli in forme inedite: paesaggi fluidi negli acquatipi su carta, solidificazioni immaginarie del vetro, sculture che evocano geodi e minerali, gioielli che diventano vere e proprie sculture da indossare. In ciascun ambito mantiene una cifra rigorosa e coerente, in cui opposti come micro e macro, solido e liquido, povero e prezioso, memoria e invenzione si incontrano e si illuminano reciprocamente.</p>
+                    
+                    <p>Per Vigna fare arte significa attraversare confini, sperimentare oltre il noto, usare la materia come strumento per dare forma a un'essenza primordiale e simbolica, capace di raccontare l'origine e il centro stesso della vita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Works Section -->
+    <section id="opere" class="gallery" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Opere</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" data-id="1">
+                    <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=600&h=800&fit=crop" alt="Opera 1">
+                    <div class="gallery-overlay">
+                        <h3>Metamorfosi I</h3>
+                        <p>2024 • Tecnica mista</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-id="2">
+                    <img src="https://images.unsplash.com/photo-1575995872537-3793d29d972c?w=800&h=600&fit=crop" alt="Opera 2">
+                    <div class="gallery-overlay">
+                        <h3>Frammenti Urbani</h3>
+                        <p>2024 • Olio su tela</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-id="3">
+                    <img src="https://images.unsplash.com/photo-1578059457703-2a457d8d5b10?w=600&h=600&fit=crop" alt="Opera 3">
+                    <div class="gallery-overlay">
+                        <h3>Equilibrio Instabile</h3>
+                        <p>2023 • Installazione</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Museums Section -->
+    <section id="musei" class="museums" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Musei</h2>
+            <div class="museums-content">
+                <p>Le opere di Giorgio Vigna sono presenti nelle collezioni permanenti di importanti istituzioni museali...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exhibitions Section -->
+    <section id="esposizioni" class="exhibitions" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Esposizioni</h2>
+            <div class="exhibitions-list">
+                <article class="exhibition-item" data-exhibition-id="1">
+                    <div class="exhibition-image">
+                        <img src="https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=800&h=500&fit=crop" alt="Exhibition 1">
+                    </div>
+                    <div class="exhibition-content">
+                        <span class="exhibition-date">15 Marzo - 30 Aprile 2024</span>
+                        <h3 class="exhibition-title">Metamorfosi Contemporanee</h3>
+                        <p class="exhibition-location">Galleria d'Arte Moderna, Milano</p>
+                        <p class="exhibition-description">Una retrospettiva che esplora le trasformazioni della materia attraverso diverse tecniche espressive.</p>
+                        <a href="#" class="exhibition-link">Scopri di più →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Press Review Section -->
+    <section id="rassegna-stampa" class="press-review" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Rassegna Stampa</h2>
+            <div class="press-content">
+                <p>Articoli e recensioni sulla produzione artistica di Giorgio Vigna...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collaborations Section -->
+    <section id="collaborazioni" class="collaborations" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Collaborazioni</h2>
+            <div class="collaborations-content">
+                <p>Progetti e collaborazioni con istituzioni, gallerie e altri artisti...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section id="pubblicazioni" class="publications" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Pubblicazioni</h2>
+            <div class="publications-content">
+                <p>Libri, saggi e articoli pubblicati dall'artista...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalogues Section -->
+    <section id="cataloghi" class="catalogues" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Cataloghi</h2>
+            <div class="catalogues-content">
+                <p>Cataloghi delle mostre e delle opere dell'artista...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" class="lightbox-content" src="" alt="">
+        <div class="lightbox-caption"></div>
+    </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giorgio Vigna - Musei</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-content">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">Giorgio Vigna</a>
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-menu">
+                <a href="opere.html" class="nav-link">Opere</a>
+                <a href="musei.html" class="nav-link active">Musei</a>
+                <a href="esposizioni.html" class="nav-link">Esposizioni</a>
+                <a href="rassegna-stampa.html" class="nav-link">Rassegna Stampa</a>
+                <a href="collaborazioni.html" class="nav-link">Collaborazioni</a>
+                <a href="pubblicazioni.html" class="nav-link">Pubblicazioni</a>
+                <a href="cataloghi.html" class="nav-link">Cataloghi</a>
+                <!-- Language Switch Mobile -->
+                <div class="language-switch-mobile">
+                    <button class="lang-btn" data-lang="it">IT</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+            <!-- Language Switch Desktop -->
+            <div class="language-switch">
+                <button class="lang-btn" data-lang="it">IT</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+    
+    <script>
+    (function() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLang = urlParams.get('lang');
+            const savedLang = localStorage.getItem('giorgio-vigna-lang');
+            const lang = (urlLang === 'en' || urlLang === 'it') ? urlLang : 
+                        (savedLang === 'en' || savedLang === 'it') ? savedLang : 'it';
+            
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        } catch (e) {}
+    })();
+    </script>
+
+    <section class="museums page-section">
+        <div class="container">
+            <h1 class="page-title">Musei</h1>
+            <div class="museums-content">
+                <p>Le opere di Giorgio Vigna sono presenti nelle collezioni permanenti di importanti istituzioni museali...</p>
+            </div>
+        </div>
+    </section>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

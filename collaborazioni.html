@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giorgio Vigna - Collaborazioni</title>
+    <title>Giorgio Vigna - Collaborazioni | Progetti Artistici</title>
+    <meta name="description" content="Progetti e collaborazioni di Giorgio Vigna con istituzioni, gallerie e altri artisti contemporanei.">
+    <meta name="keywords" content="Giorgio Vigna collaborazioni, progetti artistici, istituzioni culturali, gallerie">
+    <meta property="og:title" content="Giorgio Vigna - Collaborazioni">
+    <link rel="canonical" href="https://giorgio-vigna.com/collaborazioni.html">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="page-content">
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-brand">Giorgio Vigna</a>
@@ -40,22 +45,20 @@
     
     <script>
     (function() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlLang = urlParams.get('lang');
-            const savedLang = localStorage.getItem('giorgio-vigna-lang');
-            const lang = (urlLang === 'en' || urlLang === 'it') ? urlLang : 
-                        (savedLang === 'en' || savedLang === 'it') ? savedLang : 'it';
-            
-            const langButtons = document.querySelectorAll('.lang-btn');
-            langButtons.forEach(btn => {
-                if (btn.dataset.lang === lang) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        } catch (e) {}
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang');
+        const savedLang = localStorage.getItem('giorgio-vigna-lang');
+        const lang = (urlLang === 'en' || urlLang === 'it') ? urlLang : 
+                    (savedLang === 'en' || savedLang === 'it') ? savedLang : 'it';
+        
+        const langButtons = document.querySelectorAll('.lang-btn');
+        langButtons.forEach(btn => {
+            if (btn.dataset.lang === lang) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
     })();
     </script>
 
@@ -69,6 +72,20 @@
     </section>
 
     </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><strong>Giorgio Vigna</strong></p>
+                    <p>Via Tortona 4, Milano 20144</p>
+                    <p>Tel +39 02 58103947</p>
+                    <p>P.IVA 13451250156</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
     <script src="script.js"></script>
 </body>
 </html>

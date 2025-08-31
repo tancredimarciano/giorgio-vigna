@@ -53,6 +53,9 @@
                 collaborazioni: 'Collaborazioni',
                 pubblicazioni: 'Pubblicazioni',
                 cataloghi: 'Cataloghi'
+            }),
+            footer: Object.freeze({
+                country: 'Italia'
             })
         }),
         en: Object.freeze({
@@ -71,6 +74,9 @@
                 collaborazioni: 'Collaborations',
                 pubblicazioni: 'Publications',
                 cataloghi: 'Catalogues'
+            }),
+            footer: Object.freeze({
+                country: 'Italy'
             })
         })
     });
@@ -100,9 +106,11 @@
 
     // Language Switch with validation
     function initLanguageSwitch() {
-        if (!elements.langButtons) return;
+        // Re-query elements since navbar was loaded dynamically
+        const langButtons = document.querySelectorAll('.lang-btn');
+        if (!langButtons || langButtons.length === 0) return;
         
-        elements.langButtons.forEach(btn => {
+        langButtons.forEach(btn => {
             btn.addEventListener('click', handleLanguageSwitch);
         });
     }
@@ -121,9 +129,10 @@
     }
 
     function updateContent(lang) {
-        // Update nav links using cached elements
-        if (elements.navLinks && translations[lang].nav) {
-            elements.navLinks.forEach((link, index) => {
+        // Update nav links - re-query since navbar is loaded dynamically
+        const navLinks = document.querySelectorAll('.nav-link');
+        if (navLinks && translations[lang].nav) {
+            navLinks.forEach((link, index) => {
                 if (index < translations[lang].nav.length) {
                     const text = translations[lang].nav[index];
                     if (text) {
@@ -143,6 +152,12 @@
             if (title) {
                 elements.pageTitle.textContent = sanitizeText(title);
             }
+        }
+        
+        // Update footer
+        const footerCountry = document.querySelector('.footer-country');
+        if (footerCountry && translations[lang].footer) {
+            footerCountry.textContent = sanitizeText(translations[lang].footer.country);
         }
     }
     
@@ -171,15 +186,25 @@
             }
             
             // Update language buttons (both desktop and mobile)
-            if (elements.langButtons) {
-                elements.langButtons.forEach(btn => {
-                    if (btn.dataset.lang === lang) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            }
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langSwitches = document.querySelectorAll('.language-switch, .language-switch-mobile');
+            
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Animate the sliding pill
+            langSwitches.forEach(switchEl => {
+                if (lang === 'en') {
+                    switchEl.classList.add('en');
+                } else {
+                    switchEl.classList.remove('en');
+                }
+            });
             
             updateContent(lang);
         } catch (error) {
@@ -191,14 +216,41 @@
 
     // Mobile Navigation
     function initMobileNavigation() {
-        if (!elements.navToggle || !elements.navMenu) return;
+        // Re-query elements since navbar was loaded dynamically
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
         
-        elements.navToggle.addEventListener('click', handleNavToggle);
+        if (!navToggle || !navMenu) return;
         
-        // Add click handler to nav links
-        if (elements.navLinks) {
-            elements.navLinks.forEach(link => {
-                link.addEventListener('click', closeMobileMenu);
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+        
+        // Add click handler to nav links with smooth transition
+        if (navLinks) {
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    
+                    // Add visual feedback
+                    link.classList.add('clicked');
+                    
+                    // Close menu with original slide animation
+                    setTimeout(() => {
+                        navToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                        
+                        // Navigate after menu slides out
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 300);
+                    }, 150);
+                });
             });
         }
     }
@@ -333,8 +385,9 @@
     
     // Navigation functionality
     function initNavigation() {
-        if (elements.navBrand) {
-            elements.navBrand.addEventListener('click', handleNavBrandClick);
+        const navBrand = document.querySelector('.nav-brand');
+        if (navBrand) {
+            navBrand.addEventListener('click', handleNavBrandClick);
         }
     }
     
@@ -386,36 +439,101 @@
     
 
     
-    // Initialize all components
-    function init() {
+
+
+    // Initialize components that don't need navbar
+    function initCore() {
         try {
             validateElements();
             
             // Set initial language from saved preference
             const savedLang = getSavedLanguage();
             currentLang = savedLang;
+            document.documentElement.lang = savedLang;
             
-            initLanguageSwitch();
-            initMobileNavigation();
             initGalleryLightbox();
             initLightboxControls();
-            initNavigation();
             
             // Add global event listeners
-            document.addEventListener('keydown', handleKeydown, { passive: true });
-            
-            // Apply language without button updates (already set)
-            document.documentElement.lang = savedLang;
-            updateContent(savedLang);
+            document.addEventListener('keydown', handleKeydown);
             
             // Expose cleanup function for potential use
             window.GiorgioVignaCleanup = cleanup;
         } catch (error) {
-            console.error('Error during initialization:', encodeURIComponent(error.message));
+            console.error('Error during core initialization:', encodeURIComponent(error.message));
+        }
+    }
+    
+    // Mobile language switch drag functionality
+    function initMobileDrag() {
+        const mobileSwitch = document.querySelector('.language-switch-mobile');
+        if (!mobileSwitch) return;
+        
+        let isDragging = false;
+        let startX = 0;
+        let currentLang = getSavedLanguage();
+        
+        function handleStart(e) {
+            isDragging = true;
+            startX = e.touches ? e.touches[0].clientX : e.clientX;
+            mobileSwitch.classList.add('dragging');
+        }
+        
+        function handleMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+        }
+        
+        function handleEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            mobileSwitch.classList.remove('dragging');
+            
+            const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            const diff = endX - startX;
+            
+            if (Math.abs(diff) > 20) {
+                const newLang = (currentLang === 'it' && diff > 0) || (currentLang === 'en' && diff < 0) 
+                    ? (currentLang === 'it' ? 'en' : 'it') 
+                    : currentLang;
+                
+                if (newLang !== currentLang) {
+                    switchLanguage(newLang);
+                    currentLang = newLang;
+                }
+            }
+        }
+        
+        mobileSwitch.addEventListener('touchstart', handleStart, { passive: false });
+        mobileSwitch.addEventListener('touchmove', handleMove, { passive: false });
+        mobileSwitch.addEventListener('touchend', handleEnd, { passive: false });
+        mobileSwitch.addEventListener('mousedown', handleStart);
+        mobileSwitch.addEventListener('mousemove', handleMove);
+        mobileSwitch.addEventListener('mouseup', handleEnd);
+    }
+
+    // Initialize navbar-dependent components
+    function initNavbar() {
+        try {
+            initLanguageSwitch();
+            initMobileNavigation();
+            initNavigation();
+            initMobileDrag();
+            
+            // Apply language content
+            const savedLang = getSavedLanguage();
+            updateContent(savedLang);
+        } catch (error) {
+            console.error('Error during navbar initialization:', encodeURIComponent(error.message));
         }
     }
     
     // Initialize when DOM is ready
+    function init() {
+        initCore();
+        initNavbar();
+    }
+    
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init, { once: true });
     } else {

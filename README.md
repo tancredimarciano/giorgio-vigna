@@ -10,28 +10,19 @@ A modern, responsive portfolio website for artist Giorgio Vigna, showcasing his 
 - **Modern UI/UX** - Clean, minimalist design
 - **Performance Optimized** - Fast loading and smooth animations
 - **Accessibility** - ARIA labels and keyboard navigation
+- **SEO Optimized** - Meta tags and structured data
+- **Component-based** - Shared navbar component
 
-## 🚀 Live Demo
+## 🚀 Development
 
-[View Live Site](https://your-username.github.io/giorgio-vigna)
+### Build System
+```bash
+npm run build    # Build optimized version
+npm run serve    # Start local server
+npm run dev      # Build and serve
+```
 
-## 📱 Screenshots
-
-### Desktop
-![Desktop View](images/screenshot-desktop.png)
-
-### Mobile
-![Mobile View](images/screenshot-mobile.png)
-
-## 🛠️ Technologies Used
-
-- **HTML5** - Semantic markup
-- **CSS3** - Modern styling with Flexbox/Grid
-- **Vanilla JavaScript** - No frameworks, pure JS
-- **LocalStorage** - Language preference persistence
-
-## 📂 Project Structure
-
+### Project Structure
 ```
 ├── index.html              # Homepage with biography
 ├── opere.html              # Works gallery
@@ -43,8 +34,14 @@ A modern, responsive portfolio website for artist Giorgio Vigna, showcasing his 
 ├── cataloghi.html          # Catalogues
 ├── styles.css              # Main stylesheet
 ├── script.js               # JavaScript functionality
-└── images/                 # Image assets
-    └── vigna-ritratto.jpg
+├── components/             # Shared components
+│   └── navbar.html
+├── js/                     # JavaScript modules
+│   └── navbar-loader.js
+├── images/                 # Image assets
+├── build.js                # Build system
+├── package.json            # Dependencies
+└── dist/                   # Built files
 ```
 
 ## 🌐 Browser Support
